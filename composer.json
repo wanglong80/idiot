@@ -1,0 +1,16 @@
+{
+  "name": "lornewang/idiot",
+  "description": "Dubbo Client in Zookeeper",
+  "keywords": ["dubbo", "zookeeper"],
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4",
+    "icecave/flax": "0.1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Idiot\\": "src" 
+    }
+  }
+}
