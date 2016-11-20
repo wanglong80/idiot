@@ -17,6 +17,7 @@ abstract class AbstractProtocol
 {
     const DEFAULT_DUBBO_VERSION = '2.8.4';
 
+    abstract public function rinser($data);
     abstract public function parser($data);
     abstract public function buffer($path, $method, $args, $group, $version, $dubboVersion);
 }

@@ -11,22 +11,9 @@
  * @author   Lorne Wang < post@lorne.wang >
  * @link     https://github.com/lornewang/idiot
  */
-namespace Idiot\Protocols;
+namespace Idiot\Languages;
 
-class JsonRPC extends AbstractProtocol
+abstract class AbstractLanguage
 {
-    public function rinser($data)
-    {
-        return trim($data);
-    }
-
-    public function parser($data)
-    {
-        return json_decode($data);
-    }
-
-    public function buffer($path, $method, $args, $group, $version, $dubboVersion)
-    {
-        // TODO
-    }
+    abstract public function typeRef($type);
 }

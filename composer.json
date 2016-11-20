@@ -1,6 +1,6 @@
 {
   "name": "lornewang/idiot",
-  "description": "Dubbo Client in Zookeeper",
+  "description": "PHP Dubbo Client in Zookeeper",
   "keywords": ["dubbo", "zookeeper"],
   "type": "library",
   "license": "MIT",

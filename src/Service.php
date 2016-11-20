@@ -25,7 +25,6 @@ class Service extends Connection
     private $version = '';
     private $dubboVersion = '2.8.4';
     private $protocol = 'hessian';
-    private $driver;
 
     public function __construct($options)
     {
@@ -40,7 +39,7 @@ class Service extends Connection
         if (empty($this->host) || empty($this->port))
         {
             $this->parseURItoProps(
-                (new Zookeeper($this->conn))->getProvider($this->path)
+                (new Zookeeper($this->conn))->getProvider($this->path, $this->version)
             );
         }
     }
@@ -54,37 +53,24 @@ class Service extends Connection
      */
     public function invoke($method, $args)
     {
-        $this->connect($this->host, $this->port);
+        $data = '';
+        $proto = Adapter::protocol($this->protocol);
 
-        $data = $this->fetch(
-            $this->protocol()->buffer($this->path, $method, $args, $this->group, $this->version, $this->dubboVersion)
-        );
-
-        return $this->protocol()->parser($data);
-    }
-
-    /**
-     * Get protocol instance
-     *
-     * @return object
-     */
-    public function protocol()
-    {
-        if (is_object($this->driver))
+        try
         {
-            return $this->driver;
+            $this->connect($this->host, $this->port);
+
+            $data = $this->fetch(
+                $proto->buffer($this->path, $method, $args, $this->group, $this->version, $this->dubboVersion)
+            );
+
+            return $proto->parser($data);
         }
-
-        $class = strtoupper($this->protocol);
-        $class = __NAMESPACE__ . "\Protocols\\{$class}";
-
-        if ( ! class_exists($class))
+        catch(Exception $e)
         {
-            throw new Exception("Can not match the class according to this protocol {$this->protocol}");
-            
+            $message = $data ? $proto->rinser($data) : $e->getMessage();
+            throw new Exception($message);
         }
-        
-        return ($this->driver = new $class);
     }
 
     /**

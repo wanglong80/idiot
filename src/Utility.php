@@ -14,7 +14,7 @@
  */
 namespace Idiot;
 
-class Utilities
+class Utility
 {
     /**
      * ASCII array to string
@@ -44,26 +44,4 @@ class Utilities
     {
 		return $min <= $value && $value <= $max;
 	}
-
-    /**
-     * Numerical converted to type string
-     *
-     * @param  integer $value
-     * @return string
-     */
-    public static function integerToTypeString($value)
-    {
-        $type = 'long';
-
-        if (self::isBetween($value, -32768, 32767))
-        {
-			$type = 'short';
-		} 
-        elseif (self::isBetween($value, -2147483648, 2147483647))
-        {
-			$type = 'int';
-		} 
-
-        return $type;
-    }
 }

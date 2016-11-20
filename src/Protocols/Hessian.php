@@ -14,55 +14,33 @@
 namespace Idiot\Protocols;
 
 use Exception;
-use Idiot\Utilities;
-use Idiot\Object;
+use Idiot\Adapter;
+use Idiot\Type;
+use Idiot\Utility;
 use Icecave\Flax\Serialization\Encoder;
 use Icecave\Flax\Serialization\Decoder;
 
 class Hessian extends AbstractProtocol
 {
-    private $typeRef = [
-        'boolean' => 'Z',
-        'int' => 'I',
-        'short' => 'S',
-        'long' => 'J',
-        'double' => 'D',
-        'float' => 'F'
-    ];
+    const DEFAULT_LANGUAGE = 'Java';
+
+    public function rinser($data)
+    {
+        return substr($data, 17);
+    }
 
     public function parser($data)
     {
-        $data = substr($data, 17);
         $decoder = new Decoder;
-        $decoder->feed($data);
+        $decoder->feed($this->rinser($data));
         return $decoder->finalize();
     }
 
     public function buffer($path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
     {
-        if (count($args) > 0)
-        {
-            $types = '';
-            foreach ($args as $arg)
-            {
-                $type = '';
-                switch(gettype($arg))
-                {
-                    case 'integer': $type = Utilities::integerToTypeString($arg); break;
-                    case 'boolean': $type = 'boolean'; break;
-                    case 'double': $type = 'double'; break;
-                    case 'string': $type ='java.lang.String';break;
-                    case 'object': $type = $arg->className(); break;
-                    default: throw new Exception("Handler for type {$type} not implemented");
-                }
+        $typeRefs = $this->typeRefs($args);
 
-                $types .= (strpos($type, '.') === FALSE 
-                    ? $this->typeRef[$type] 
-                    : 'L' . str_replace('.', '/', $type) . ';');
-            }
-        }
-
-        $attachment = new Object('java.util.HashMap', [
+        $attachment = Type::object('java.util.HashMap', [
             'interface' => $path,
             'version' => $version,
             'group' => $group,
@@ -70,12 +48,12 @@ class Hessian extends AbstractProtocol
             'timeout' => '60000'
         ]);
 
-        $bufferBody = $this->bufferBody($path, $method, $types, $args, $attachment, $version, $dubboVersion);
+        $bufferBody = $this->bufferBody($path, $method, $typeRefs, $args, $attachment, $version, $dubboVersion);
         $bufferHead = $this->bufferHead(strlen($bufferBody));
         return $bufferHead . $bufferBody;
     }
 
-    public function bufferHead($length)
+    private function bufferHead($length)
     {
         $head = [0xda, 0xbb, 0xc2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         $i = 15;
@@ -95,10 +73,10 @@ class Hessian extends AbstractProtocol
             $head[$i] = $length;
         }
 
-        return Utilities::asciiArrayToString($head);
+        return Utility::asciiArrayToString($head);
     }
 
-    public function bufferBody($path, $method, $types, $args, $attachment, $version, $dubboVersion)
+    private function bufferBody($path, $method, $typeRefs, $args, $attachment, $version, $dubboVersion)
     {
         $body = '';
         $encoder = new Encoder;
@@ -106,7 +84,7 @@ class Hessian extends AbstractProtocol
         $body .= $encoder->encode($path);
         $body .= $encoder->encode($version);
         $body .= $encoder->encode($method);
-        $body .= $encoder->encode($types);
+        $body .= $encoder->encode($typeRefs);
         
         foreach ($args as $arg)
         {
@@ -115,5 +93,65 @@ class Hessian extends AbstractProtocol
 
         $body .= $encoder->encode($attachment);
         return $body;
+    }
+
+    private function typeRefs(&$args)
+    {
+        $typeRefs = '';
+
+        if (count($args))
+        {
+            $lang = Adapter::language(self::DEFAULT_LANGUAGE);
+
+            foreach ($args as &$arg)
+            {
+                if ($arg instanceof Type)
+                {
+                    $type = $arg->type;
+                    $arg = $arg->value;
+                }
+                else
+                {
+                    $type = $this->argToType($arg);             
+                }
+
+                $typeRefs .= $lang->typeRef($type);
+            }
+        }  
+
+        return $typeRefs;
+    }
+
+    private function argToType($arg)
+    {
+        switch(gettype($arg))
+        {
+            case 'integer': 
+                return $this->numToType($arg);
+            case 'boolean': 
+                return Type::BOOLEAN;
+            case 'double': 
+                return Type::DOUBLE;
+            case 'string':
+                return Type::STRING;
+            case 'object': 
+                return $arg->className();
+            default:
+                throw new Exception("Handler for type {$arg} not implemented");
+        }
+    }
+
+    private function numToType($value)
+    {
+        if (Utility::isBetween($value, -32768, 32767))
+        {
+			return Type::SHORT;
+		} 
+        elseif (Utility::isBetween($value, -2147483648, 2147483647))
+        {
+			return Type::INT;
+		} 
+
+        return Type::LONG;
     }
 }
