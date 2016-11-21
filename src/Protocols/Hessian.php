@@ -145,12 +145,12 @@ class Hessian extends AbstractProtocol
     {
         if (Utility::isBetween($value, -32768, 32767))
         {
-			return Type::SHORT;
-		} 
+            return Type::SHORT;
+        } 
         elseif (Utility::isBetween($value, -2147483648, 2147483647))
         {
-			return Type::INT;
-		} 
+            return Type::INT;
+        } 
 
         return Type::LONG;
     }

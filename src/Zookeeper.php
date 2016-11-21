@@ -36,7 +36,7 @@ class Zookeeper
     public function getProvider($path, $version = '')
     {
         $providers = @$this->zk->getChildren("/dubbo/{$path}/providers");
-
+        
         if (count($providers) < 1)
         {
             throw new Exception("Can not find the zoo: {$path} , please check dubbo service.");
