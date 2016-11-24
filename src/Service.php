@@ -24,7 +24,7 @@ class Service extends Connection
     private $group = '';
     private $version = '';
     private $dubboVersion = '2.8.4';
-    private $protocol = 'hessian';
+    private $protocol = 'dubbo';
 
     public function __construct($options)
     {
