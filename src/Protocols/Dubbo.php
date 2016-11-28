@@ -19,6 +19,7 @@ use Idiot\Type;
 use Idiot\Utility;
 use Icecave\Flax\Serialization\Encoder;
 use Icecave\Flax\Serialization\Decoder;
+use Icecave\Collections\Vector;
 
 class Dubbo extends AbstractProtocol
 {
@@ -33,7 +34,14 @@ class Dubbo extends AbstractProtocol
     {
         $decoder = new Decoder;
         $decoder->feed($this->rinser($data));
-        return $decoder->finalize();
+        $obj = $decoder->finalize();
+
+        if ($obj instanceof Vector)
+        {
+            $obj = $obj->elements();
+        }
+
+        return $obj;
     }
 
     public function buffer($path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
