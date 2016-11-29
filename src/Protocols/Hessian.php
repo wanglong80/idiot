@@ -16,23 +16,14 @@ namespace Idiot\Protocols;
 use Exception;
 use Icecave\Flax\Serialization\Encoder;
 use Icecave\Flax\Serialization\Decoder;
+use Icecave\Flax\HessianClientFactory;
 
 class Hessian extends AbstractProtocol
 {
-    public function rinser($data)
+    public function connect($host, $port, $path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
     {
+        $client = new HessianClientFactory;
+        list($data, $error) = $client->create("{$host}:{$port}")->doRequest($method, $args);
         return $data;
-    }
-
-    public function parser($data)
-    {
-        $decoder = new Decoder;
-        $decoder->feed($this->rinser($data));
-        return $decoder->finalize();
-    }
-
-    public function buffer($path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
-    {
-        // TODO
     }
 }

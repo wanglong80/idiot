@@ -15,7 +15,7 @@ namespace Idiot;
 
 use Exception;
 
-class Service extends Connection
+class Service
 {
     private $conn = '';
     private $host = '';
@@ -53,24 +53,18 @@ class Service extends Connection
      */
     public function invoke($method, $args)
     {
-        $data = '';
         $proto = Adapter::protocol($this->protocol);
-
-        try
-        {
-            $this->connect($this->host, $this->port);
-
-            $data = $this->fetch(
-                $proto->buffer($this->path, $method, $args, $this->group, $this->version, $this->dubboVersion)
-            );
-
-            return $proto->parser($data);
-        }
-        catch(Exception $e)
-        {
-            $message = $data ? $proto->rinser($data) : $e->getMessage();
-            throw new Exception($message);
-        }
+ 
+        return $proto->connect(
+            $this->host, 
+            $this->port, 
+            $this->path, 
+            $method, 
+            $args, 
+            $this->group, 
+            $this->version, 
+            $this->dubboVersion
+        );
     }
 
     /**

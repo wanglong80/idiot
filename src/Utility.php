@@ -44,4 +44,23 @@ class Utility
     {
 		return $min <= $value && $value <= $max;
 	}
+
+    public static function sliceToArray($str, $start, $length = FALSE)
+    {
+        $arr = [];
+        for ($i = 0; $i < strlen($str); $i++)
+        {
+            if ($length !== FALSE && ($i - $start) >= $length)
+            {
+                break;
+            }
+
+            if ($i >= $start)
+            {
+                $arr[] = ord($str[$i]);
+            }            
+        }
+
+        return $arr;
+    }
 }

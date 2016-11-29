@@ -25,12 +25,62 @@ class Dubbo extends AbstractProtocol
 {
     const DEFAULT_LANGUAGE = 'Java';
 
-    public function rinser($data)
+    public function connect($host, $port, $path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
+    {
+        try
+        {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+            socket_connect($socket, $host, $port);
+
+            $buffer = $this->buffer($path, $method, $args, $group, $version, $dubboVersion);
+            socket_write($socket, $buffer, strlen($buffer));
+
+            $data = '';
+            $bl = 16;
+            $chunks = [];
+
+            do
+            {
+                $chunk = @socket_read($socket, 1024);
+
+                if (count($chunks)< 1)
+                {
+                    $arr = Utility::sliceToArray($chunk, 0, 16);
+                    $i = 0;
+                    while ($i < 3)
+                    {
+                        $bl += array_pop($arr) * pow(256, $i++);
+                    }
+                }
+
+                $chunks[] = $chunk;
+                
+                $data .= $chunk;
+
+                if (strlen($data) >= $bl)
+                {
+                    break;
+                }
+            }
+            while(TRUE);
+
+            socket_close($socket);
+            
+            return $this->parser($data);
+        }
+        catch(Exception $e)
+        {
+            $message = $data ? $this->rinser($data) : $e->getMessage();
+            throw new Exception($message);
+        }
+    }
+
+    private function rinser($data)
     {
         return substr($data, 17);
     }
 
-    public function parser($data)
+    private function parser($data)
     {
         $decoder = new Decoder;
         $decoder->feed($this->rinser($data));
@@ -44,7 +94,7 @@ class Dubbo extends AbstractProtocol
         return $obj;
     }
 
-    public function buffer($path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
+    private function buffer($path, $method, $args, $group, $version, $dubboVersion)
     {
         $typeRefs = $this->typeRefs($args);
 

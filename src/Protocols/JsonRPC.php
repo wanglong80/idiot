@@ -15,17 +15,7 @@ namespace Idiot\Protocols;
 
 class JsonRPC extends AbstractProtocol
 {
-    public function rinser($data)
-    {
-        return trim($data);
-    }
-
-    public function parser($data)
-    {
-        return json_decode($data);
-    }
-
-    public function buffer($path, $method, $args, $group, $version, $dubboVersion)
+    public function connect($host, $port, $path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
     {
         // TODO
     }
