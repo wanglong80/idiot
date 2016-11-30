@@ -13,6 +13,7 @@
  */
 namespace Idiot\Protocols;
 
+use stdClass;
 use Exception;
 use Idiot\Adapter;
 use Idiot\Type;
@@ -20,6 +21,7 @@ use Idiot\Utility;
 use Icecave\Flax\Serialization\Encoder;
 use Icecave\Flax\Serialization\Decoder;
 use Icecave\Collections\Vector;
+use Icecave\Chrono\DateTime;
 
 class Dubbo extends AbstractProtocol
 {
@@ -37,27 +39,25 @@ class Dubbo extends AbstractProtocol
 
             $data = '';
             $bl = 16;
-            $chunks = [];
 
             do
             {
                 $chunk = @socket_read($socket, 1024);
 
-                if (count($chunks)< 1)
+                if (empty($data))
                 {
                     $arr = Utility::sliceToArray($chunk, 0, 16);
                     $i = 0;
+                    
                     while ($i < 3)
                     {
                         $bl += array_pop($arr) * pow(256, $i++);
                     }
                 }
 
-                $chunks[] = $chunk;
-                
                 $data .= $chunk;
 
-                if (strlen($data) >= $bl)
+                if (empty($chunk) || strlen($data) >= $bl)
                 {
                     break;
                 }
@@ -85,13 +85,38 @@ class Dubbo extends AbstractProtocol
         $decoder = new Decoder;
         $decoder->feed($this->rinser($data));
         $obj = $decoder->finalize();
+        return $this->recursive($obj);
+    }
 
-        if ($obj instanceof Vector)
-        {
-            $obj = $obj->elements();
+    private function recursive($data)
+    {
+        if ($data instanceof Vector)
+        {            
+            return $this->recursive($data->elements());
         }
 
-        return $obj;
+        if ($data instanceof DateTime)
+        {
+            return $data->unixTime();
+        }
+        
+        if ($data instanceof stdClass)
+        {
+            foreach ($data as $key => $value)
+            {
+                $data->$key = $this->recursive($value);
+            }
+        }
+
+        if (is_array($data))
+        {
+            foreach ($data as $key => $value)
+            {
+                $data[$key] = $this->recursive($value);
+            }
+        }
+
+        return $data;
     }
 
     private function buffer($path, $method, $args, $group, $version, $dubboVersion)

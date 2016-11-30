@@ -45,6 +45,14 @@ class Utility
 		return $min <= $value && $value <= $max;
 	}
 
+    /**
+     * Slice string to array
+     *
+     * @param  string  $str
+     * @param  integer $start
+     * @param  integer $length
+     * @return array
+     */
     public static function sliceToArray($str, $start, $length = FALSE)
     {
         $arr = [];

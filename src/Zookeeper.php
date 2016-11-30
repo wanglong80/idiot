@@ -42,8 +42,6 @@ class Zookeeper
             throw new Exception("Can not find the zoo: {$path} , please check dubbo service.");
         }
 
-        //$providers = [$providers[0]];
-
         foreach ($providers as $provider)
         {
             $info = parse_url(urldecode($provider));
