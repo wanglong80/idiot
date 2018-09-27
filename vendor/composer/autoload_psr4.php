@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'com\\xintiaotime\\thrift\\demo\\' => array($baseDir . '/idl/gen-php'),
     'Thrift\\' => array($vendorDir . '/packaged/thrift/src'),
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),

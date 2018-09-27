@@ -11,7 +11,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Idiot\\": "src" 
+      "Idiot\\": "src" ,
+	"com\\xintiaotime\\thrift\\demo\\":"idl\\gen-php"
     }
   }
 }

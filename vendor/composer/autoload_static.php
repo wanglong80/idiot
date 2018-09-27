@@ -11,6 +11,10 @@ class ComposerStaticInitec194b953f734941e30206d787212ffe
     );
 
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'com\\xintiaotime\\thrift\\demo\\' => 28,
+        ),
         'T' => 
         array (
             'Thrift\\' => 7,
@@ -39,6 +43,10 @@ class ComposerStaticInitec194b953f734941e30206d787212ffe
     );
 
     public static $prefixDirsPsr4 = array (
+        'com\\xintiaotime\\thrift\\demo\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/idl/gen-php',
+        ),
         'Thrift\\' => 
         array (
             0 => __DIR__ . '/..' . '/packaged/thrift/src',

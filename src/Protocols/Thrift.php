@@ -39,21 +39,49 @@
  
 namespace Idiot\Protocols;
 use Exception;
-use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TSocket;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Exception\TException;
+use Thrift\ClassLoader\ThriftClassLoader;
+use Idiot\TProtocol\TBinaryDubboProtocol;
+
 
 class Thrift extends AbstractProtocol
 {
+    const MAGIC = 0xdabc ;
+    const VERSION = 1;
+    const NAME="thrift";
+    private $loader ;
+
+    public function __construct(){
+      $this->loader = new ThriftClassLoader();
+      $this->loader->registerDefinition("com\\xintiaotime\\thrift\\demo", "../idl/gen-php/");
+      $this->loader->register();
+    }
+
     public function connect($host, $port, $path, $method, $args, $group, $version, $dubboVersion = self::DEFAULT_DUBBO_VERSION)
     {
         //TODO  fix 
-      	$socket = new TSocket($host, $port);
-		$transport = new TBufferedTransport($socket, 1024, 1024);
-  		$protocol = new TBinaryProtocol($transport);
+      $socket = new TSocket($host, $port);
+		  $transport = new TBufferedTransport($socket, 1024, 1024);
+  		$protocol = new TBinaryDubboProtocol($transport);
   		
+      $transport->open();
+      $protocol->writeI16(self::MAGIC);
+      $protocol->writeI32(1000);
+      $protocol->writeI16(1000);
+      $protocol->writeByte(self::VERSION);
+      $protocol->writeString($path);
+      $protocol->writeI64(random_int(0,9999));
+      $transport->flush();
 
-        return $data;
+      $className = "\\".str_replace("." ,"\\",$path) . 'Client';
+      $client = new $className($protocol);
+
+      var_dump($client);
+
+      $data = call_user_func(array($client, $method), $args);
+
+      return $data;
     }
 }
