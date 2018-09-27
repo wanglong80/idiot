@@ -1,0 +1,34 @@
+{
+    "name": "icecave/collections",
+    "description": "A PHP collection library loosely inspired by the .NET runtime and the C++ STL.",
+    "keywords": ["collection", "container", "array", "sequence", "map", "hash", "stack", "queue"],
+    "homepage": "https://github.com/IcecaveStudios/collections",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Harris",
+            "email": "james.harris@icecave.com.au",
+            "homepage": "https://github.com/jmalloc"
+        },
+        {
+            "name": "Kevin Millar",
+            "email": "koden.km@gmail.com",
+            "homepage": "https://github.com/koden-km"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "ext-mbstring": "*",
+        "icecave/parity": "~1",
+        "icecave/repr": "~1"
+    },
+    "require-dev": {
+        "eloquent/liberator": "~1",
+        "icecave/archer": "~1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Icecave\\Collections\\": "src"
+        }
+    }
+}

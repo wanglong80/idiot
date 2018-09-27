@@ -1,0 +1,46 @@
+{
+    "name": "icecave/flax",
+    "description": "A client library for the Hessian binary web services protocol.",
+    "keywords": [
+        "hessian",
+        "burlap",
+        "binary",
+        "protocol",
+        "java",
+        "webservice",
+        "api"
+    ],
+    "homepage": "https://github.com/IcecaveStudios/flax",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Harris",
+            "email": "james.harris@icecave.com.au",
+            "homepage": "https://github.com/jmalloc"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "eloquent/enumeration": "~5",
+        "guzzle/http": "~3",
+        "icecave/chrono": "~1",
+        "icecave/collections": "~1",
+        "icecave/isolator": "~3",
+        "psr/log": "~1"
+    },
+    "require-dev": {
+        "eloquent/liberator": "~1",
+        "icecave/archer": "~1",
+        "icecave/parity": "~1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Icecave\\Flax\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.1.x-dev"
+        }
+    }
+}
