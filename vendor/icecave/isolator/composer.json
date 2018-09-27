@@ -1,0 +1,41 @@
+{
+    "name": "icecave/isolator",
+    "description": "Dependency injection for global functions.",
+    "keywords": [
+        "test",
+        "phpunit",
+        "unit",
+        "mock",
+        "fake",
+        "double",
+        "stub"
+    ],
+    "homepage": "https://github.com/IcecaveStudios/isolator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Harris",
+            "email": "james.harris@icecave.com.au",
+            "homepage": "https://github.com/jmalloc"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+        "icecave/archer": "~1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Icecave\\Isolator\\": "src"
+        },
+        "files": [
+            "src/register-autoloader.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "3.0.x-dev"
+        }
+    }
+}

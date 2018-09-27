@@ -1,0 +1,47 @@
+{
+    "name": "icecave/chrono",
+    "description": "A date & time library that is decoupled from the system clock.",
+    "keywords": [
+        "time",
+        "date",
+        "clock",
+        "timer",
+        "chrono",
+        "iso"
+    ],
+    "homepage": "https://github.com/IcecaveStudios/chrono",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Harris",
+            "email": "james.harris@icecave.com.au",
+            "homepage": "https://github.com/jmalloc"
+        },
+        {
+            "name": "Kevin Millar",
+            "email": "koden.km@gmail.com",
+            "homepage": "https://github.com/koden-km"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "icecave/isolator": "~2|~3",
+        "icecave/parity": "~1"
+    },
+    "require-dev": {
+        "eloquent/liberator": "~1",
+        "icecave/archer": "dev-develop",
+        "phake/phake": "^2",
+        "phpunit/phpunit": "^4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Icecave\\Chrono\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        }
+    }
+}
